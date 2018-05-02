@@ -696,7 +696,7 @@ public class MainWindow extends Application {
                     this.column = this.matrizMosaic[0].length;
                     canvasMosaic.setHeight(this.row * this.pixelSize);
                     canvasMosaic.setWidth(this.column * this.pixelSize);
-                    drawGridSave(graCoMosaic, canvasMosaic, column, row);
+                    drawGrid(graCoMosaic, canvasMosaic, column, row);
                     repaintImage(graCoMosaic, column, row);
                 } // if (list.get(1) != null)
             } // if (new File("save.dat").exists())
