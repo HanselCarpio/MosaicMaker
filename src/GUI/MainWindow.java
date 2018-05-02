@@ -584,8 +584,8 @@ public class MainWindow extends Application {
 
 //    
     public void repaintImage(GraphicsContext graCoMosaic, int row, int column) throws IOException {
-        for (int x = 0; x < column; x++) {
-            for (int y = 0; y < row; y++) {
+        for (int x = 0; x < columnsMosaic; x++) {
+            for (int y = 0; y < rowsMosaic; y++) {
                 try {
                     if (matrizMosaic[x][y].getiBytes().length != 0) {
                         matrizMosaic[x][y].draw(graCoMosaic);
@@ -672,13 +672,6 @@ public class MainWindow extends Application {
         FileChooser.ExtensionFilter chooser = new FileChooser.ExtensionFilter("DAT", "*.dat");
         fileChooserOpen.getExtensionFilters().add(chooser);
         File file = fileChooserOpen.showOpenDialog(primaryStage);
-        txtPS.setText(String.valueOf(pixelSize));
-        txtPS.setEditable(false);
-        txtColumns.setEditable(false);
-        txtRows.setEditable(false);
-        btDrawDefaultGrid.setDisable(true);
-        btDrawGrid.setDisable(true);
-        btnDeleteMosaic.setDisable(true);
         try {
             if (file.exists()) {
                 List<PartsImage[][]> imageses = new SaveFileBusiness().recover(file);
@@ -702,13 +695,20 @@ public class MainWindow extends Application {
                     this.column = this.matrizMosaic[0].length;
                     canvasMosaic.setHeight(this.row * this.pixelSize);
                     canvasMosaic.setWidth(this.column * this.pixelSize);
-                    drawGrid(graCoMosaic, canvasMosaic, column, row);
+                    drawGridSave(graCoMosaic, canvasMosaic, column, row);
                     repaintImage(graCoMosaic, column, row);
                 } // if (list.get(1) != null)
             } // if (new File("save.dat").exists())
         } catch (IOException | ClassNotFoundException ex) {
             Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
         } // try-catch
+        txtPS.setText(String.valueOf(pixelSize));
+        txtPS.setEditable(false);
+        txtColumns.setEditable(false);
+        txtRows.setEditable(false);
+        btDrawDefaultGrid.setDisable(true);
+        btDrawGrid.setDisable(true);
+        btnDeleteMosaic.setDisable(true);
     } // reinit
 
     public static void main(String[] args) {
