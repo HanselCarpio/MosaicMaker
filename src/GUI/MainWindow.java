@@ -310,6 +310,7 @@ public class MainWindow extends Application {
                 matrizMosaic[k][l].setiBytes(matrizImage[i][j].getiBytes());
                 graCoMosaic.clearRect(matrizMosaic[k][l].getPosix() * pixelSize + 2, matrizMosaic[k][l].getPosiy() * pixelSize + 2, pixelSize - 3, pixelSize - 3);
                 matrizMosaic[k][l].setiBytes(null);
+                drawGridSave(graCoImage, canvasMosaic, rowsMosaic, columnsMosaic);
             }
 
         });
