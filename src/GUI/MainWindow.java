@@ -557,9 +557,9 @@ public class MainWindow extends Application {
 
     public void exportImage(Stage primaryStage, GraphicsContext graCoMosaic) {
         try {
-        graCoMosaic.clearRect(0, 0, canvasMosaic.getWidth(), canvasMosaic.getHeight());
-        graCoMosaic.clearRect(0, 0, column * pixelSize, row * pixelSize);
-            repaintImage(graCoMosaic);
+            graCoMosaic.clearRect(0, 0, canvasMosaic.getWidth(), canvasMosaic.getHeight());
+            graCoMosaic.clearRect(0, 0, column * pixelSize, row * pixelSize);
+            repaintImage(graCoMosaic, row, column);
             WritableImage wim = new WritableImage((int) Math.round(canvasMosaic.getWidth()), (int) Math.round(canvasMosaic.getHeight()));
             SnapshotParameters snapshotParameters = new SnapshotParameters();
             snapshotParameters.setFill(Color.TRANSPARENT);
@@ -576,14 +576,14 @@ public class MainWindow extends Application {
                 Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
             }
             drawGridSave(graCoMosaic, canvasMosaic, rowsMosaic, columnsMosaic);
-            repaintImage(graCoMosaic);
+            repaintImage(graCoMosaic, row, column);
         } catch (IOException ex) {
             Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
 //    
-    public void repaintImage(GraphicsContext graCoMosaic) throws IOException {
+    public void repaintImage(GraphicsContext graCoMosaic, int row, int column) throws IOException {
         for (int x = 0; x < columnsMosaic; x++) {
             for (int y = 0; y < rowsMosaic; y++) {
                 try {
@@ -646,9 +646,9 @@ public class MainWindow extends Application {
 //                fileChooser.getSelectedExtensionFilter();
                 File file = fileChooserSafe.showSaveDialog(primaryStage);
 //                if (file != null) {
-                    new SaveFileBusiness().saveProject(matrizImage, matrizMosaic, file);
+                new SaveFileBusiness().saveProject(matrizImage, matrizMosaic, file);
 //                }
-                
+
             } catch (IOException ex) {
                 Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -667,7 +667,7 @@ public class MainWindow extends Application {
         }
     }
 
-    public void reinit(Stage primaryStage, Canvas image, GraphicsContext graCoImage, GraphicsContext graCoMosaic, Canvas canvasMosaic) {
+    public void reinit(Stage primaryStage, Canvas canvasImage, GraphicsContext graCoImage, GraphicsContext graCoMosaic, Canvas canvasMosaic) {
         FileChooser fileChooserOpen = new FileChooser();
         FileChooser.ExtensionFilter chooser = new FileChooser.ExtensionFilter("DAT", "*.dat");
         fileChooserOpen.getExtensionFilters().add(chooser);
@@ -676,22 +676,14 @@ public class MainWindow extends Application {
             if (file.exists()) {
                 List<PartsImage[][]> imageses = new SaveFileBusiness().recover(file);
                 if (imageses.get(0) != null) {
-
                     this.matrizImage = imageses.get(0);
                     this.pixelSize = this.matrizImage[0][0].getPixelSize();
-                    txtPS.setText(String.valueOf(pixelSize));
-                    txtPS.setEditable(false);
-                    txtColumns.setEditable(false);
-                    txtRows.setEditable(false);
-                    btDrawDefaultGrid.setDisable(true);
-                    btDrawGrid.setDisable(true);
-                    btnDeleteMosaic.setDisable(true);
                     this.row = this.matrizImage.length;
                     this.columnas = this.matrizImage[0].length;
-                    image.setHeight((this.row) * this.pixelSize + ((this.row + 1) * 10));
-                    image.setWidth((this.column) * this.pixelSize + ((this.column + 1) * 10));
-                    for (int x = 0; x < this.row; x++) {
-                        for (int y = 0; y < this.column; y++) {
+                    canvasImage.setHeight((this.row) * this.pixelSize + ((this.row + 1) * 5));
+                    canvasImage.setWidth((this.column) * this.pixelSize + ((this.column + 1) * 5));
+                    for (int x = 0; x < this.column; x++) {
+                        for (int y = 0; y < this.row; y++) {
                             this.matrizImage[x][y].draw(graCoImage);
                         } // for y
                     } // for x
@@ -703,13 +695,20 @@ public class MainWindow extends Application {
                     this.column = this.matrizMosaic[0].length;
                     canvasMosaic.setHeight(this.row * this.pixelSize);
                     canvasMosaic.setWidth(this.column * this.pixelSize);
-                    drawGrid(graCoMosaic, canvasMosaic, column, row);
-                    repaintImage(graCoMosaic);
+                    drawGridSave(graCoMosaic, canvasMosaic, column, row);
+                    repaintImage(graCoMosaic, column, row);
                 } // if (list.get(1) != null)
             } // if (new File("save.dat").exists())
         } catch (IOException | ClassNotFoundException ex) {
             Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
         } // try-catch
+        txtPS.setText(String.valueOf(pixelSize));
+        txtPS.setEditable(false);
+        txtColumns.setEditable(false);
+        txtRows.setEditable(false);
+        btDrawDefaultGrid.setDisable(true);
+        btDrawGrid.setDisable(true);
+        btnDeleteMosaic.setDisable(true);
     } // reinit
 
     public static void main(String[] args) {
