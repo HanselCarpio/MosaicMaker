@@ -65,8 +65,8 @@ public class MainWindow extends Application {
     private Label labelPx, labelRows, labelColumns;
     private Button btnSelectImage, btnDeleteMosaic, saveNewImage, btDrawDefaultGrid, btDrawGrid;
     private TextField txtPS, txtRows, txtColumns;
-    int column = 0, row = 0;
-    int columnsMosaic = 0, rowsMosaic = 0;
+    private int column = 0, row = 0;
+    private int columnsMosaic = 0, rowsMosaic = 0;
     int filas = 0, columnas = 0;
     private int pixelSize = 0;
     private int i, j, k, l;
