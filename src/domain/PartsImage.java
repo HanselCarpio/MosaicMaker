@@ -68,5 +68,5 @@ public abstract class PartsImage implements Serializable{
     
     public abstract void draw(GraphicsContext gc) throws IOException;
 
-    public abstract boolean chunkClicked(int xMouse, int yMouse);
+    public abstract boolean pressMouse(int xMouse, int yMouse);
 }
