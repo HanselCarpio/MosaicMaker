@@ -27,12 +27,18 @@ public class SaveFileData {
     public SaveFileData() {
     }
 
-    public void saveProject(PartsImage[][] matrizImage, PartsImage[][] matrizMosaic, File file) throws FileNotFoundException, IOException {
-        List<PartsImage[][]> all = new ArrayList<>();
-        all.add(matrizImage);
-        all.add(matrizMosaic);
+    public void saveProject(PartsImage[][] matrizImage, PartsImage[][] matrizMosaic, String path) throws IOException, ClassNotFoundException {
+        File file;
+        if(new File(path).exists()){
+            file = new File(path);
+        }else{
+            file=new File(path);
+        }
+        List<PartsImage[][]> previous = new ArrayList<>();
+        previous.add(matrizImage);
+        previous.add(matrizMosaic);
         ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(file));
-        objectOutputStream.writeUnshared(all);
+        objectOutputStream.writeUnshared(previous);
         objectOutputStream.close();
     } // save
 

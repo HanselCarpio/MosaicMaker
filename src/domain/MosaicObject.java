@@ -95,11 +95,11 @@ public class MosaicObject extends PartsImage{
     } // draw
 
     @Override
-    public boolean chunkClicked(int xMouse, int yMouse) {
+    public boolean pressMouse(int xMouse, int yMouse) {
         if ((xMouse >= this.posix * pixelSize && xMouse <= this.posix * pixelSize + pixelSize)
                 && (yMouse >= this.posiy * pixelSize && yMouse <= this.posiy * pixelSize + pixelSize)) {
             return true;
         }
         return false;
-    }
+    } 
 }

@@ -32,11 +32,13 @@ public class ImageObject extends PartsImage{
         gc.drawImage(imageView.snapshot(snapshot, null), (posix * pixelSize) + (1 + posix) * 10, (posiy * pixelSize) + (1 + posiy) * 10, pixelSize, pixelSize);
     } // draw
 
-    public boolean chunkClicked(int xMouse, int yMouse) {
+    public boolean pressMouse(int xMouse, int yMouse) {
         if ((xMouse >= (posix * pixelSize) + (1 + posix) * 10 && xMouse <= (posix * pixelSize) + (1 + posix) * 10 + this.pixelSize)
                 && (yMouse >= (posiy * pixelSize) + (1 + posiy) * 10 && yMouse <= (posiy * pixelSize) + (1 + posiy) * 10 + this.pixelSize)) {
             return true;
         }
         return false;
     } 
+
+
 }

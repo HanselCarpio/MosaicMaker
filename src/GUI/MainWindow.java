@@ -253,7 +253,7 @@ public class MainWindow extends Application {
                 if (matrizImage != null) {
                     rowsMosaic = row;
                     columnsMosaic = column;
-                    drawGrid(graCoImage, canvasMosaic, row, column);
+                    drawGrid(graCoMosaic, canvasMosaic, rowsMosaic, columnsMosaic);
                 } else {
                     System.err.println("no se pinta lo que no existe");
                 }
@@ -268,7 +268,7 @@ public class MainWindow extends Application {
                     if (!txtRows.getText().equals("") && !txtColumns.getText().equals("")) {
                         rowsMosaic = Integer.parseInt(txtRows.getText());
                         columnsMosaic = Integer.parseInt(txtColumns.getText());
-                        drawGrid(graCoImage, canvasMosaic, rowsMosaic, columnsMosaic);
+                        drawGrid(graCoMosaic, canvasMosaic, rowsMosaic, columnsMosaic);
                         txtRows.setText("");
                         txtColumns.setText("");
                     } else {
@@ -298,9 +298,9 @@ public class MainWindow extends Application {
 
             @Override
             public void handle(ActionEvent event) {
-                for (int x = 0; x < columnsMosaic; x++) {
-                    for (int y = 0; y < MainWindow.this.rowsMosaic; y++) {
-                        if (matrizMosaic[x][y].chunkClicked(x1, y1)) {
+                for (int x = 0; x < MainWindow.this.rowsMosaic; x++) {
+                    for (int y = 0; y < MainWindow.this.columnsMosaic; y++) {
+                        if (matrizMosaic[x][y].pressMouse(x1, y1)) {
                             k = x;
                             l = y;
                             break;
@@ -310,7 +310,6 @@ public class MainWindow extends Application {
                 matrizMosaic[k][l].setiBytes(matrizImage[i][j].getiBytes());
                 graCoMosaic.clearRect(matrizMosaic[k][l].getPosix() * pixelSize + 2, matrizMosaic[k][l].getPosiy() * pixelSize + 2, pixelSize - 3, pixelSize - 3);
                 matrizMosaic[k][l].setiBytes(null);
-                drawGridSave(graCoImage, canvasMosaic, rowsMosaic, columnsMosaic);
             }
 
         });
@@ -346,13 +345,37 @@ public class MainWindow extends Application {
         miSaveProject.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                safeProyect(primaryStage);
+                if (MainWindow.this.matrizImage != null) {
+                    if (pixelSize != 0 && row != 0 && column != 0) {
+                        FileChooser fileChooserSafe = new FileChooser();
+                        FileChooser.ExtensionFilter chooser = new FileChooser.ExtensionFilter("DAT", "*.dat");
+                        fileChooserSafe.getExtensionFilters().add(chooser);
+                        File file = fileChooserSafe.showSaveDialog(primaryStage);
+                        if (file != null) {
+                            try {
+                                new SaveFileBusiness().saveProject(matrizImage, matrizMosaic, file.getAbsolutePath());
+                            } catch (IOException ex) {
+                                Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+                            } catch (ClassNotFoundException ex) {
+                                Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                        }
+                    } else {
+                        System.err.println("no se guardo nada");
+                    }
+                }
             }
         });
 
         miOpenProject.setOnAction(new EventHandler<ActionEvent>() {
             public void handle(ActionEvent event) {
-                reinit(primaryStage, canvasImage, graCoImage, graCoMosaic, canvasMosaic);
+                FileChooser fileChooserOpen = new FileChooser();
+                FileChooser.ExtensionFilter chooser = new FileChooser.ExtensionFilter("DAT", "*.dat");
+                fileChooserOpen.getExtensionFilters().add(chooser);
+                File file = fileChooserOpen.showOpenDialog(primaryStage);
+                if (file != null) {
+                    reinit(primaryStage, canvasImage, graCoMosaic, graCoMosaic, canvasMosaic, file);
+                }
             }
         });
 
@@ -361,7 +384,9 @@ public class MainWindow extends Application {
             public void handle(ActionEvent event) {
                 newProyect(canvasImage, graCo, graCoMosaic, canvasMosaic);
                 txtRows.setText("");
+                txtRows.setEditable(true);
                 txtColumns.setText("");
+                txtColumns.setEditable(true);
                 btDrawDefaultGrid.setDisable(false);
                 btDrawGrid.setDisable(false);
                 btnDeleteMosaic.setDisable(false);
@@ -398,11 +423,27 @@ public class MainWindow extends Application {
             File selectedDirectory = fileChooserSelect.showOpenDialog(primaryStage);
             if (selectedDirectory != null) {
                 try {
-                    bufferedImage = ImageIO.read(selectedDirectory);
-                    canvasImage.setHeight(bufferedImage.getHeight());
-                    canvasImage.setWidth(bufferedImage.getWidth());
+                    BufferedImage aux = ImageIO.read(selectedDirectory);
+                    if (this.pixelSize != 0) {
+                        if (aux.getHeight() >= this.pixelSize && aux.getWidth() >= this.pixelSize) {
+                            graCo.clearRect(0, 0, canvasImage.getWidth(), canvasImage.getHeight());
+                            this.bufferedImage = aux;
+                            canvasImage.setHeight(this.bufferedImage.getHeight());
+                            canvasImage.setWidth(this.bufferedImage.getWidth());
+//                            graCo.drawImage(SwingFXUtils.toFXImage(this.bufferedImage, null), 0, 0);
+                            imageParts(graCo, canvasImage);
+                        }
+                    } else {
+                        this.bufferedImage = aux;
+                        canvasImage.setHeight(this.bufferedImage.getHeight());
+                        canvasImage.setWidth(this.bufferedImage.getWidth());
+//                        graCo.drawImage(SwingFXUtils.toFXImage(this.bufferedImage, null), 0, 0);
 
-                    imageParts(graCo, canvasImage);
+//                    bufferedImage = ImageIO.read(selectedDirectory);
+//                    canvasImage.setHeight(bufferedImage.getHeight());
+//                    canvasImage.setWidth(bufferedImage.getWidth());
+                        imageParts(graCo, canvasImage);
+                    }
                 } catch (IOException ex) {
                     Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -416,9 +457,9 @@ public class MainWindow extends Application {
         if (matrizImage == null) {
             System.out.println("Ingrese una imagen primero");
         } else if (matrizImage != null) {
-            for (int x = 0; x < column; x++) {
-                for (int y = 0; y < row; y++) {
-                    if (matrizImage[x][y].chunkClicked(posX, posY)) {
+            for (int x = 0; x < row; x++) {
+                for (int y = 0; y < column; y++) {
+                    if (matrizImage[x][y].pressMouse(posX, posY)) {
                         i = x;
                         j = y;
                         break;
@@ -431,9 +472,9 @@ public class MainWindow extends Application {
     }
 
     public void pasteImageOnMosaic(GraphicsContext graCoMosaic, int posX, int posY) {
-        for (int x = 0; x < columnsMosaic; x++) {
-            for (int y = 0; y < MainWindow.this.rowsMosaic; y++) {
-                if (matrizMosaic[x][y].chunkClicked(posX, posY)) {
+        for (int x = 0; x < rowsMosaic; x++) {
+            for (int y = 0; y < columnsMosaic; y++) {
+                if (matrizMosaic[x][y].pressMouse(posX, posY)) {
                     k = x;
                     l = y;
                     break;
@@ -448,10 +489,10 @@ public class MainWindow extends Application {
         }
     }
 
-    public byte[] imageToBytes(BufferedImage image) throws IOException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ImageIO.write(image, "png", baos);
-        return baos.toByteArray();
+    public byte[] imageToBytes(BufferedImage bufferedImage) throws IOException {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        ImageIO.write(bufferedImage, "png", byteArrayOutputStream);
+        return byteArrayOutputStream.toByteArray();
     } // imageToBytes
 
     public void imageParts(GraphicsContext graCoIma, Canvas canvasImage) {
@@ -467,76 +508,81 @@ public class MainWindow extends Application {
         columnas = 0;
         System.err.println(column + ", " + row);
 //        PixelReader pixelReader = image.getPixelReader();
-        matrizImage = new ImageObject[column][row];
+        this.matrizImage = new ImageObject[row][column];
         //ciclos para ir cortando la imagen con el tamaño de los pixeles
-        for (int x = 0; x < this.column; x++) {
-            for (int y = 0; y < this.row; y++) {
+        for (int x = 0; x < this.row; x++) {
+            for (int y = 0; y < this.column; y++) {
                 //Initialize the image array with image parts
-                if (pixelSize < partsImageWidth) {
-                    if (pixelSize < partsImageHeight) {
-                        //corta la imagen en partes
-                        try {
-                            BufferedImage aux = bufferedImage.getSubimage((x * this.pixelSize), (y * this.pixelSize), this.pixelSize, this.pixelSize);
-                            //va guardando las partes de la imagen en una matriz de objetos y la va pintando a la vez
-                            this.matrizImage[x][y] = new ImageObject(imageToBytes(aux), x, y, pixelSize);
-                            matrizImage[x][y].draw(graCoIma);
-                        } catch (IOException ex) {
-                            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-                        //se le resta los pixeles de la parte recortada
-                        partsImageHeight -= pixelSize;
-                        filas++;
-                        System.err.println("filas" + filas);
-                    } else {
-                        System.err.println("error en fila");
-                    }
-                } else {
-                    System.err.println("error en columna");
+//                if (pixelSize < partsImageWidth) {
+//                    if (pixelSize < partsImageHeight) {
+                //corta la imagen en partes
+                try {
+                    BufferedImage aux = bufferedImage.getSubimage((y * this.pixelSize), (x * this.pixelSize), this.pixelSize, this.pixelSize);
+                    //va guardando las partes de la imagen en una matriz de objetos y la va pintando a la vez
+                    this.matrizImage[x][y] = new ImageObject(imageToBytes(aux), y, x, pixelSize);
+                    matrizImage[x][y].draw(graCoIma);
+                } catch (IOException ex) {
+                    Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
                 }
+                //se le resta los pixeles de la parte recortada
+//                        partsImageHeight -= pixelSize;
+                filas++;
+                System.err.println("filas" + filas);
+//                    } else {
+//                        System.err.println("error en fila");
+//                    }
+//                } else {
+//                    System.err.println("error en columna");
+//                }
                 // draws the image parts
             } // for y
-            partsImageWidth -= pixelSize;
-            partsImageHeight = (int) this.bufferedImage.getHeight();
+//            partsImageWidth -= pixelSize;
+//            partsImageHeight = (int) this.bufferedImage.getHeight();
             columnas++;
             System.err.println("columnas" + columnas);
         } // for x
     }
 
     //inicializa el grid
-    public void initMosiacPartsImage(int row, int column) {
+    public void initMosiacPartsImage() {
         //inicializa el grid con el tamaño de la matriz de objetos donde estan las partes de imagenes
-        this.matrizMosaic = new MosaicObject[column][row];
-        for (int x = 0; x < column; x++) {
-            for (int y = 0; y < row; y++) {
-                this.matrizMosaic[x][y] = new MosaicObject(new byte[0], x, y, this.pixelSize);
+        this.matrizMosaic = new MosaicObject[rowsMosaic][columnsMosaic];
+        for (int x = 0; x < rowsMosaic; x++) {
+            for (int y = 0; y < columnsMosaic; y++) {
+                this.matrizMosaic[x][y] = new MosaicObject(new byte[0], y, x, this.pixelSize);
             }
         }
     }
 
     //pintar el grid
-    public void drawGrid(GraphicsContext gc, Canvas canvasMosaic, int row, int column) {
+    public void drawGrid(GraphicsContext graCoMosaic, Canvas canvasMosaic, int rowMosaic, int columnMosaic) {
         //se inicia el grid
-        initMosiacPartsImage(row, column);
-        canvasMosaic.setHeight(row * pixelSize);
-        canvasMosaic.setWidth(column * pixelSize);
-        for (int x = 0; x <= row; x++) {
-            gc.strokeLine(0, x * pixelSize, column * pixelSize, x * pixelSize); // rows
-        }
-        for (int y = 0; y <= column; y++) {
-            gc.strokeLine(y * pixelSize, 0, y * pixelSize, pixelSize * row); // cols
+        if (this.pixelSize > 0 && rowMosaic > 0 && columnMosaic > 0) {
+            initMosiacPartsImage();
+            canvasMosaic.setHeight(rowMosaic * this.pixelSize);
+            canvasMosaic.setWidth(columnMosaic * this.pixelSize);
+            for (int x = 0; x <= rowMosaic; x++) {
+                graCoMosaic.strokeLine(0, x * this.pixelSize, columnMosaic * this.pixelSize, x * this.pixelSize); // rows
+            }
+            for (int y = 0; y <= columnMosaic; y++) {
+                graCoMosaic.strokeLine(y * this.pixelSize, 0, y * this.pixelSize, this.pixelSize * rowMosaic); // cols
+            }
         }
     } // drawGrid
 
-    public void drawGridSave(GraphicsContext gc, Canvas canvasMosaic, int row, int column) {
+    public void drawGridSave(GraphicsContext graCoMosaic, Canvas canvasMosaic, int rowMosaic, int columnMosaic) {
         //se inicia el grid
 //        initMosiacPartsImage(row, column);
-        canvasMosaic.setHeight(row * pixelSize);
-        canvasMosaic.setWidth(column * pixelSize);
-        for (int x = 0; x <= row; x++) {
-            gc.strokeLine(0, x * pixelSize, column * pixelSize, x * pixelSize); // rows
-        }
-        for (int y = 0; y <= column; y++) {
-            gc.strokeLine(y * pixelSize, 0, y * pixelSize, pixelSize * row); // cols
+        if (this.pixelSize > 0 && rowMosaic > 0 && columnMosaic > 0) {
+            initMosiacPartsImage();
+            canvasMosaic.setHeight(rowMosaic * this.pixelSize);
+            canvasMosaic.setWidth(columnMosaic * this.pixelSize);
+            for (int x = 0; x <= rowMosaic; x++) {
+                graCoMosaic.strokeLine(0, x * this.pixelSize, columnMosaic * this.pixelSize, x * this.pixelSize); // rows
+            }
+            for (int y = 0; y <= columnMosaic; y++) {
+                graCoMosaic.strokeLine(y * this.pixelSize, 0, y * this.pixelSize, this.pixelSize * rowMosaic); // cols
+            }
         }
     }
 
@@ -559,8 +605,8 @@ public class MainWindow extends Application {
     public void exportImage(Stage primaryStage, GraphicsContext graCoMosaic) {
         try {
             graCoMosaic.clearRect(0, 0, canvasMosaic.getWidth(), canvasMosaic.getHeight());
-            graCoMosaic.clearRect(0, 0, column * pixelSize, row * pixelSize);
-            repaintImage(graCoMosaic, row, column);
+            graCoMosaic.clearRect(0, 0, this.column * this.pixelSize, this.row * this.pixelSize);
+            repaintImage(graCoMosaic);
             WritableImage wim = new WritableImage((int) Math.round(canvasMosaic.getWidth()), (int) Math.round(canvasMosaic.getHeight()));
             SnapshotParameters snapshotParameters = new SnapshotParameters();
             snapshotParameters.setFill(Color.TRANSPARENT);
@@ -576,17 +622,17 @@ public class MainWindow extends Application {
             } catch (IOException ex) {
                 Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
             }
-            drawGridSave(graCoMosaic, canvasMosaic, rowsMosaic, columnsMosaic);
-            repaintImage(graCoMosaic, row, column);
+            drawGridSave(graCoMosaic, canvasMosaic, row, column);
+            repaintImage(graCoMosaic);
         } catch (IOException ex) {
             Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
 //    
-    public void repaintImage(GraphicsContext graCoMosaic, int row, int column) throws IOException {
-        for (int x = 0; x < columnsMosaic; x++) {
-            for (int y = 0; y < rowsMosaic; y++) {
+    public void repaintImage(GraphicsContext graCoMosaic) throws IOException {
+        for (int x = 0; x < this.rowsMosaic; x++) {
+            for (int y = 0; y < this.columnsMosaic; y++) {
                 try {
                     if (matrizMosaic[x][y].getiBytes().length != 0) {
                         matrizMosaic[x][y].draw(graCoMosaic);
@@ -636,68 +682,58 @@ public class MainWindow extends Application {
     }
 
     //guarda la informacion del mosaicObject en .dat falta de hacer
-    public void safeProyect(Stage primaryStage) {
-        if (pixelSize != 0 && row != 0 && column != 0) {
-            try {
-//                setExtFilters(fileChooser);
-//                fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("DAT", "*.dat"));
-                FileChooser fileChooserSafe = new FileChooser();
-                FileChooser.ExtensionFilter chooser = new FileChooser.ExtensionFilter("DAT", "*.dat");
-                fileChooserSafe.getExtensionFilters().add(chooser);
-//                fileChooser.getSelectedExtensionFilter();
-                File file = fileChooserSafe.showSaveDialog(primaryStage);
+//    public void saveProyect(Stage primaryStage) throws IOException, ClassNotFoundException {
+//        if (this.matrizImage != null) {
+//            if (pixelSize != 0 && row != 0 && column != 0) {
+//                FileChooser fileChooserSafe = new FileChooser();
+//                FileChooser.ExtensionFilter chooser = new FileChooser.ExtensionFilter("DAT", "*.dat");
+//                fileChooserSafe.getExtensionFilters().add(chooser);
+//                File file = fileChooserSafe.showSaveDialog(primaryStage);
 //                if (file != null) {
-                new SaveFileBusiness().saveProject(matrizImage, matrizMosaic, file);
+//                    new SaveFileBusiness().saveProject(matrizImage, matrizMosaic, file.getAbsolutePath());
 //                }
+//            } else {
+//                System.err.println("no se guardo nada");
+//            }
+//        }
+//    }
 
-            } catch (IOException ex) {
-                Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        } else {
-            System.err.println("no se guardo nada");
-        }
-    }
+//    public void openProject(Stage primaryStage, GraphicsContext graCoMosaic, Canvas canvasMosaic) {
+//        FileChooser fileChooserOpen = new FileChooser();
+//        FileChooser.ExtensionFilter chooser = new FileChooser.ExtensionFilter("DAT", "*.dat");
+//        fileChooserOpen.getExtensionFilters().add(chooser);
+//        File selectedDirectory = fileChooserOpen.showOpenDialog(primaryStage);
+//        if (selectedDirectory != null) {
+//            reinit(primaryStage, canvasImage, graCoMosaic, graCoMosaic, canvasMosaic, fileChooserOpen);
+//        }
+//    }
 
-    public void openProject(Stage primaryStage, GraphicsContext graCoMosaic, Canvas canvasMosaic) {
-        FileChooser fileChooserOpen = new FileChooser();
-        FileChooser.ExtensionFilter chooser = new FileChooser.ExtensionFilter("SAV", "*.sav");
-        fileChooserOpen.getExtensionFilters().add(chooser);
-//        setExtFilters(fileChooser);
-        File selectedDirectory = fileChooserOpen.showOpenDialog(primaryStage);
-        if (selectedDirectory != null) {
-        }
-    }
-
-    public void reinit(Stage primaryStage, Canvas canvasImage, GraphicsContext graCoImage, GraphicsContext graCoMosaic, Canvas canvasMosaic) {
-        FileChooser fileChooserOpen = new FileChooser();
-        FileChooser.ExtensionFilter chooser = new FileChooser.ExtensionFilter("DAT", "*.dat");
-        fileChooserOpen.getExtensionFilters().add(chooser);
-        File file = fileChooserOpen.showOpenDialog(primaryStage);
+    public void reinit(Stage primaryStage, Canvas canvasImage, GraphicsContext graCoImage, GraphicsContext graCoMosaic, Canvas canvasMosaic, File file) {
         try {
             if (file.exists()) {
-                List<PartsImage[][]> imageses = new SaveFileBusiness().recover(file);
-                if (imageses.get(0) != null) {
-                    this.matrizImage = imageses.get(0);
+                List<PartsImage[][]> partsImagesesList = new SaveFileBusiness().recover(file);
+                if (partsImagesesList.get(0) != null) {
+                    this.matrizImage = partsImagesesList.get(0);
                     this.pixelSize = this.matrizImage[0][0].getPixelSize();
                     this.row = this.matrizImage.length;
                     this.columnas = this.matrizImage[0].length;
                     canvasImage.setHeight((this.row) * this.pixelSize + ((this.row + 1) * 5));
                     canvasImage.setWidth((this.column) * this.pixelSize + ((this.column + 1) * 5));
-                    for (int x = 0; x < this.column; x++) {
-                        for (int y = 0; y < this.row; y++) {
+                    for (int x = 0; x < this.row; x++) {
+                        for (int y = 0; y < this.column; y++) {
                             this.matrizImage[x][y].draw(graCoImage);
                         } // for y
                     } // for x
                 } // if (list.get(0) != null)
-                if (imageses.get(1) != null) {
+                if (partsImagesesList.get(1) != null) {
 
-                    this.matrizMosaic = imageses.get(1);
+                    this.matrizMosaic = partsImagesesList.get(1);
                     this.row = this.matrizMosaic.length;
                     this.column = this.matrizMosaic[0].length;
                     canvasMosaic.setHeight(this.row * this.pixelSize);
                     canvasMosaic.setWidth(this.column * this.pixelSize);
-                    drawGrid(graCoMosaic, canvasMosaic, column, row);
-                    repaintImage(graCoMosaic, column, row);
+                    drawGridSave(graCoMosaic, canvasMosaic, row, column);
+                    repaintImage(graCoMosaic);
                 } // if (list.get(1) != null)
             } // if (new File("save.dat").exists())
         } catch (IOException | ClassNotFoundException ex) {
