@@ -61,9 +61,9 @@ public abstract class PartsImage implements Serializable{
     }
     
     public BufferedImage bytesToImage() throws IOException {
-        ByteArrayInputStream in = new ByteArrayInputStream(this.iBytes);
-        BufferedImage bImageFromConvert = ImageIO.read(in);
-        return bImageFromConvert;
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(this.iBytes);
+        BufferedImage bufferedImageToConvert = ImageIO.read(inputStream);
+        return bufferedImageToConvert;
     } // bytesToImage
     
     public abstract void draw(GraphicsContext gc) throws IOException;
