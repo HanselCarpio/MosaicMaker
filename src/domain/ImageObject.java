@@ -26,7 +26,7 @@ public class ImageObject extends PartsImage{
     
     
      @Override
-    public void draw(GraphicsContext gc)throws IOException{
+    public void printImageOnMosaic(GraphicsContext gc)throws IOException{
         ImageView imageView = new ImageView(SwingFXUtils.toFXImage(super.bytesToImage(), null));
         SnapshotParameters snapshot = new SnapshotParameters();
         gc.drawImage(imageView.snapshot(snapshot, null), (posix * pixelSize) + (1 + posix) * 10, (posiy * pixelSize) + (1 + posiy) * 10, pixelSize, pixelSize);

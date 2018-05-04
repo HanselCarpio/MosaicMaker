@@ -87,17 +87,18 @@ public class MosaicObject extends PartsImage{
     } // flip
 
     @Override
-    public void draw(GraphicsContext gc) throws IOException {
+    public void printImageOnMosaic(GraphicsContext gc) throws IOException {
         ImageView imageView = new ImageView(SwingFXUtils.toFXImage(bytesToImage(), null));
         imageView.setRotate(imageView.getRotate() + rotation);
         SnapshotParameters snapshot = new SnapshotParameters();
-        gc.drawImage(imageView.snapshot(snapshot, null), posix * pixelSize + horizontal, posiy * pixelSize + vertical, pixelSize * negativoHorizontal, pixelSize * negativoVertical);
+        gc.drawImage(imageView.snapshot(snapshot, null), this.posix * this.pixelSize + this.horizontal, this.posiy * 
+                this.pixelSize + this.vertical, this.pixelSize * this.negativoHorizontal, this.pixelSize * this.negativoVertical);
     } // draw
 
     @Override
     public boolean pressMouse(int xMouse, int yMouse) {
-        if ((xMouse >= this.posix * pixelSize && xMouse <= this.posix * pixelSize + pixelSize)
-                && (yMouse >= this.posiy * pixelSize && yMouse <= this.posiy * pixelSize + pixelSize)) {
+        if ((xMouse >= this.posix * this.pixelSize && xMouse <= this.posix * this.pixelSize + this.pixelSize)
+                && (yMouse >= this.posiy * this.pixelSize && yMouse <= this.posiy * this.pixelSize + this.pixelSize)) {
             return true;
         }
         return false;
