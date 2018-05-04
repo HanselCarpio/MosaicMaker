@@ -66,7 +66,7 @@ public abstract class PartsImage implements Serializable{
         return bufferedImageToConvert;
     } // bytesToImage
     
-    public abstract void draw(GraphicsContext gc) throws IOException;
+    public abstract void printImageOnMosaic(GraphicsContext gc) throws IOException;
 
     public abstract boolean pressMouse(int xMouse, int yMouse);
 }
