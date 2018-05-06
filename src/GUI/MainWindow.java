@@ -61,8 +61,8 @@ public class MainWindow extends Application {
     private Label labelPx, labelRows, labelColumns;
     private Button btnSelectImage, btnDeleteMosaic, saveNewImage, btDrawDefaultGrid, btDrawGrid, btnDeleteImage;
     private TextField txtPS, txtRows, txtColumns;
-    int column = 0, row = 0;
-    int columnsMosaic = 0, rowsMosaic = 0;
+    private int column = 0, row = 0;
+    private int columnsMosaic = 0, rowsMosaic = 0;
     int filas = 0, columnas = 0;
     private int pixelSize = 0;
     private int i, j, k, l;
@@ -787,24 +787,24 @@ public class MainWindow extends Application {
                     canvasMosaic.setWidth(this.columnsMosaic * this.pixelSize);
                     if (partsImagesesList.get(1) != null) {
                         System.err.println("ENTRO");
-//                        repaintImage(graCoMosaic, rowsMosaic, columnsMosaic);
-                        for (int x = 0; x < rowsMosaic; x++) {
-                            for (int y = 0; y < columnsMosaic; y++) {
-                                System.err.println("ciclo anidado");
-                                try {
-                                    if (this.matrizMosaic[x][y].getiBytes() != null) {
-                                        this.matrizMosaic[x][y].printImageOnMosaic(graCoMosaic);
-                                        System.err.println("print");
-                                    } else {
-                                        System.err.println("unprint");
-
-                                    }
-                                } catch (IOException ex) {
-                                    Logger.getLogger(MainWindow.class
-                                            .getName()).log(Level.SEVERE, null, ex);
-                                }
-                            } // for y
-                        } // for x
+                        repaintImage(graCoMosaic, rowsMosaic, columnsMosaic);
+//                        for (int x = 0; x < rowsMosaic; x++) {
+//                            for (int y = 0; y < columnsMosaic; y++) {
+//                                System.err.println("ciclo anidado");
+//                                try {
+//                                    if (this.matrizMosaic[x][y].getiBytes() != null) {
+//                                        this.matrizMosaic[x][y].printImageOnMosaic(graCoMosaic);
+//                                        System.err.println("print");
+//                                    } else {
+//                                        System.err.println("unprint");
+//
+//                                    }
+//                                } catch (IOException ex) {
+//                                    Logger.getLogger(MainWindow.class
+//                                            .getName()).log(Level.SEVERE, null, ex);
+//                                }
+//                            } // for y
+//                        } // for x
                         drawGridSave(graCoMosaic, canvasMosaic, rowsMosaic, columnsMosaic);
                     } else {
                         System.err.println("ERRÓ AL ENTRAR");
