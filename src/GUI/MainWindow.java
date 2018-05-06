@@ -498,18 +498,12 @@ public class MainWindow extends Application {
                             this.bufferedImage = aux;
                             canvasImage.setHeight(this.bufferedImage.getHeight());
                             canvasImage.setWidth(this.bufferedImage.getWidth());
-//                            graCo.drawImage(SwingFXUtils.toFXImage(this.bufferedImage, null), 0, 0);
                             imageParts(graCo, canvasImage);
                         }
                     } else {
                         this.bufferedImage = aux;
                         canvasImage.setHeight(this.bufferedImage.getHeight());
                         canvasImage.setWidth(this.bufferedImage.getWidth());
-//                        graCo.drawImage(SwingFXUtils.toFXImage(this.bufferedImage, null), 0, 0);
-
-//                    bufferedImage = ImageIO.read(selectedDirectory);
-//                    canvasImage.setHeight(bufferedImage.getHeight());
-//                    canvasImage.setWidth(bufferedImage.getWidth());
                         imageParts(graCo, canvasImage);
 
                     }
@@ -521,43 +515,6 @@ public class MainWindow extends Application {
         } else {
             System.err.println("Ingrese pixel size");
         }
-    }
-
-    public void selectAnImage(int posX, int posY) {
-//        if (matrizImage == null) {
-//            System.out.println("Ingrese una imagen primero");
-//        } else if (matrizImage != null) {
-//            for (int x = 0; x < row; x++) {
-//                for (int y = 0; y < column; y++) {
-//                    if (matrizImage[x][y].pressMouse(posX, posY)) {
-//                        i = x;
-//                        j = y;
-//                        break;
-//                    } else {
-//                        System.err.println("ERROR" + column + row);
-//                    }
-//                }
-//            }
-//        }
-    }
-
-    public void pasteImageOnMosaic(GraphicsContext graCoMosaic, int posX, int posY) {
-//        for (int x = 0; x < rowsMosaic; x++) {
-//            for (int y = 0; y < columnsMosaic; y++) {
-//                if (matrizMosaic[x][y].pressMouse(posX, posY)) {
-//                    k = x;
-//                    l = y;
-//                    break;
-//                }
-//            }
-//        }
-//        try {
-//            matrizMosaic[k][l].setiBytes(matrizImage[i][j].getiBytes());
-//            matrizMosaic[k][l].printImageOnMosaic(graCoMosaic);
-//
-//        } catch (IOException ex) {
-//            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
-//        }
     }
 
     public byte[] imageToBytes(BufferedImage bufferedImage) throws IOException {
@@ -788,23 +745,6 @@ public class MainWindow extends Application {
                     if (partsImagesesList.get(1) != null) {
                         System.err.println("ENTRO");
                         repaintImage(graCoMosaic, rowsMosaic, columnsMosaic);
-//                        for (int x = 0; x < rowsMosaic; x++) {
-//                            for (int y = 0; y < columnsMosaic; y++) {
-//                                System.err.println("ciclo anidado");
-//                                try {
-//                                    if (this.matrizMosaic[x][y].getiBytes() != null) {
-//                                        this.matrizMosaic[x][y].printImageOnMosaic(graCoMosaic);
-//                                        System.err.println("print");
-//                                    } else {
-//                                        System.err.println("unprint");
-//
-//                                    }
-//                                } catch (IOException ex) {
-//                                    Logger.getLogger(MainWindow.class
-//                                            .getName()).log(Level.SEVERE, null, ex);
-//                                }
-//                            } // for y
-//                        } // for x
                         drawGridSave(graCoMosaic, canvasMosaic, rowsMosaic, columnsMosaic);
                     } else {
                         System.err.println("ERRÓ AL ENTRAR");
