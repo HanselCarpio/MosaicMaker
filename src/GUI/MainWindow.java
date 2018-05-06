@@ -320,16 +320,16 @@ public class MainWindow extends Application {
             ) {
                 for (int x = 0; x < MainWindow.this.rowsMosaic; x++) {
                     for (int y = 0; y < MainWindow.this.columnsMosaic; y++) {
-                        if (MainWindow.this.matrizMosaic[x][y].pressMouse(x1, y1)) {
+                        if (matrizMosaic[x][y].pressMouse(x1, y1)) {
                             k = x;
                             l = y;
                             break;
                         }
                     }
                 }
-                MainWindow.this.matrizMosaic[k][l].setiBytes(MainWindow.this.matrizImage[i][j].getiBytes());
-                graCoMosaic.clearRect(MainWindow.this.matrizMosaic[k][l].getPosix() * pixelSize + 2, MainWindow.this.matrizMosaic[k][l].getPosiy() * pixelSize + 2, pixelSize - 3, pixelSize - 3);
-                MainWindow.this.matrizMosaic[k][l].setiBytes(null);
+                matrizMosaic[k][l].setiBytes(matrizImage[i][j].getiBytes());
+                graCoMosaic.clearRect(matrizMosaic[k][l].getPosix() * pixelSize + 2, matrizMosaic[k][l].getPosiy() * pixelSize + 2, pixelSize - 3, pixelSize - 3);
+                matrizMosaic[k][l].setiBytes(new byte[0]);
             }
 
         }
@@ -687,8 +687,8 @@ public class MainWindow extends Application {
     public void repaintInMosaic(GraphicsContext graCoMosaic, int rowsMosaic, int columnsMosaic) throws IOException {
         for (int x = 0; x < rowsMosaic; x++) {
             for (int y = 0; y < columnsMosaic; y++) {
-                if (this.matrizMosaic[x][y].getiBytes().length != 0) {
-                    this.matrizMosaic[x][y].printImageOnMosaic(graCoMosaic);
+                if (matrizMosaic[x][y].getiBytes().length != 0) {
+                    matrizMosaic[x][y].printImageOnMosaic(graCoMosaic);
                     System.err.println("print");
                 } else {
                     System.err.println("unprint");
