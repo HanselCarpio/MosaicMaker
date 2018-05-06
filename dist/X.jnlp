@@ -8,11 +8,7 @@
   </information>
   <resources>
     <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
-<<<<<<< HEAD
-    <jar href="X.jar" size="32540" download="eager" />
-=======
-    <jar href="X.jar" size="32567" download="eager" />
->>>>>>> d102b76475d4cbf66180d7ef3f369d5a69f38e74
+    <jar href="X.jar" size="33144" download="eager" />
   </resources>
   <applet-desc  width="800" height="600" main-class="com.javafx.main.NoJavaFXFallback"  name="X" >
     <param name="requiredFXVersion" value="8.0+"/>
