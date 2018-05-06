@@ -216,7 +216,7 @@ public class MainWindow extends Application {
             ) {
                 GraphicsContext graCo = canvasImage.getGraphicsContext2D();
                 selectImage(primaryStage, graCo, canvasImage);
-                if(matrizImage != null){
+                if (matrizImage != null) {
                     btnSelectImage.setDisable(true);
                 }
             } // handle
@@ -246,6 +246,8 @@ public class MainWindow extends Application {
                 txtRows.setEditable(true);
                 btDrawDefaultGrid.setDisable(false);
                 btDrawGrid.setDisable(false);
+                txtColumns.setText("");
+                txtRows.setText("");
             } // handle
         }
         );
@@ -280,8 +282,8 @@ public class MainWindow extends Application {
                         rowsMosaic = Integer.parseInt(txtRows.getText());
                         columnsMosaic = Integer.parseInt(txtColumns.getText());
                         drawGrid(graCoMosaic, canvasMosaic, rowsMosaic, columnsMosaic);
-                        txtRows.setText("");
-                        txtColumns.setText("");
+                        txtRows.setText(String.valueOf(rowsMosaic));
+                        txtColumns.setText(String.valueOf(columnsMosaic));
                         txtColumns.setEditable(false);
                         txtRows.setEditable(false);
                         btDrawGrid.setDisable(true);
@@ -474,6 +476,7 @@ public class MainWindow extends Application {
                 btDrawDefaultGrid.setDisable(false);
                 btDrawGrid.setDisable(false);
                 btnDeleteMosaic.setDisable(false);
+                btnSelectImage.setDisable(false);
             }
         });
 
@@ -711,7 +714,7 @@ public class MainWindow extends Application {
             } else {
                 System.err.println("no se guardo nada");
             }
-        }else{
+        } else {
             System.err.println("no se puede guardar");
         }
     }
@@ -724,7 +727,7 @@ public class MainWindow extends Application {
         if (file != null) {
             initOpenedProject(primaryStage, canvasImage, graCoImage, graCoMosaic, canvasMosaic, file);
         }
-        if(matrizImage != null){
+        if (matrizImage != null) {
             btnSelectImage.setDisable(true);
         }
     }
